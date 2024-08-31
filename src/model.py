@@ -29,13 +29,15 @@ def upload_training_data(file_path):
             file=f,
             purpose='fine-tune'
         )
+    print("response-upload--->", response)
     return response.id
 
 def create_fine_tuning_job(file_id):
     response = openai.fine_tuning.jobs.create(
         training_file=file_id,
-        model="gpt-4o-mini-2024-07-18"
+        model="gpt-4o-2024-08-06",
     )
+    print("response-create--->",response)
     return response.fine_tuned_model
 
 def fine_tune_model(training_data):
@@ -52,15 +54,28 @@ def fine_tune_model(training_data):
 
 def extract_keywords(resume, job_description, model):
     prompt = f"Extract key skills and qualifications from the following resume based on the job description:\n\nJob Description:\n{job_description}\n\nResume:\n{resume}\n\nKey Skills and Qualifications:"
-    response = openai.chat.completions.create(model=model, messages=prompt, max_tokens=150)
-    return response.choices[0].text.strip()
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt}
+    ]
+    response = openai.chat.completions.create(model=model, messages=messages, max_tokens=100)
+    return response.choices[0].message.content
 
 def rate_skills(transcript, job_description, model):
     prompt = f"Rate the skills of the candidate based on the following interview transcript and job description:\n\nJob Description:\n{job_description}\n\nInterview Transcript:\n{transcript}\n\nSkill Ratings:"
-    response = openai.chat.completions.create(model=model, messages=prompt, max_tokens=150)
-    return response.choices[0].text.strip()
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt}
+    ]
+    response = openai.chat.completions.create(model=model, messages=messages, max_tokens=100)
+    return response.choices[0].message.content
 
 def compare_candidates(candidateA, candidateB, job_description, model):
-    prompt = f"Based on the following details, determine which candidate is the best fit for the role:\n\nJob Description:\n{job_description}\n\nCandidate A:\n{candidateA}\n\nCandidate B:\n{candidateB}\n\nPreferred Candidate:"
-    response = openai.chat.completions.create(model=model, messages=prompt, max_tokens=50)
-    return response.choices[0].text.strip()
+    prompt = f"Based on the following details, return the candidate_id of the candidate which is the best fit for the role:\n\nJob Description:\n{job_description}\n\nCandidate A:\n{candidateA}\n\nCandidate B:\n{candidateB}\n\nPreferred Candidate:, ONLY RETURN THE CANDIDATE ID which would be of format '8ab47434-09a9-44e6-8c77-f9fd20c57765'"
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": prompt},
+        {"role": "system", "content": "<candidate_id>"}
+    ]
+    response = openai.chat.completions.create(model=model, messages=messages, max_tokens=100)
+    return response.choices[0].message.content

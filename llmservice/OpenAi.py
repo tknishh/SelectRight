@@ -10,7 +10,7 @@ class OpenAi:
     def ask(self, context, question, functions=[]):
         try:
             response = openai.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o-mini-2024-07-18",
                 messages=context,
                 # functions=functions,
                 max_tokens=150,
@@ -19,7 +19,7 @@ class OpenAi:
                 temperature=0.7
             )
             return {
-                'msg': response.choices[0].message['content'],
+                'msg': response.choices[0].message.content,
                 'raw': response
             }
         except Exception as e:

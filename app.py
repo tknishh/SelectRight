@@ -40,15 +40,17 @@ if page == "Evaluate Test Data":
             
             candidateA_details = {
                 "keywords": extract_keywords(candidateA_resume, job_description, fine_tuned_model),
-                "skills": rate_skills(candidateA_transcript, job_description, fine_tuned_model)
+                "skills": rate_skills(candidateA_transcript, job_description, fine_tuned_model),
+                "candidate_id": row['candidateAId']
             }
             candidateB_details = {
                 "keywords": extract_keywords(candidateB_resume, job_description, fine_tuned_model),
-                "skills": rate_skills(candidateB_transcript, job_description, fine_tuned_model)
+                "skills": rate_skills(candidateB_transcript, job_description, fine_tuned_model),
+                "candidate_id": row['candidateBId']
             }
             
             preferred_candidate = compare_candidates(candidateA_details, candidateB_details, job_description, fine_tuned_model)
-            
+            print(f"Preferred Candidate: {preferred_candidate}", f"Winner ID: {winner_id}")
             if preferred_candidate == winner_id:
                 correct_predictions += 1
         
