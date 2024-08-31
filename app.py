@@ -13,7 +13,7 @@ initialize_openai(api_key)
 data = load_data("data/train_dataset.csv")
 
 # Fine-tune the model
-fine_tuned_model = fine_tune_model(data)
+fine_tuned_model = "gpt-4o-2024-08-06"
 
 # Streamlit app sections
 st.sidebar.title("Navigation")
